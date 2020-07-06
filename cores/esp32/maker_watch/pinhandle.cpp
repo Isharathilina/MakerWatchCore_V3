@@ -954,9 +954,11 @@ void pinMode(uint8_t pin, uint8_t mode)
 				break;
 		   case 161: 
 				EX16_1.pinMode(mappedPinNo, mode);
+				//Serial.println("trigger pinmode 81");
 				break;
 		   case 162: 
 				EX16_2.pinMode(mappedPinNo, mode);
+				//Serial.println("trigger pinmode 82");
 				break;
 		   case 163:
 				EX16_3.pinMode(mappedPinNo, mode);
@@ -1253,15 +1255,15 @@ void interruptPinDrive()
 				if(ex16bitCount==1)
 				{
 					
-					//pin = EX16_1.getInterruptedPin();  // noice interrupt genarate 
-					pin = 5;
+					pin = EX16_1.getInterruptedPin();  // noice interrupt genarate 
+					//pin = 5;
 					//Serial.print("pin value");
 					//Serial.println(pin);
 					if(pin!=0) // if return 0, it havent detect interrupt
 					{
 						// if configered pin;  EX16_1.getInterruptEdge()
 						// then, run
-						runPinInterrupt((pin+pinAjustVal_Ex8bit), -1); //EX16_1.getInterruptEdge()
+						runPinInterrupt((pin+pinAjustVal_Ex8bit), 1); //EX16_1.getInterruptEdge()
 						//Serial.println(pin+pinAjustVal_Ex8bit);
 					}
 				}else if(ex16bitCount==2)

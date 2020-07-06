@@ -19,10 +19,14 @@ extern TFT_eSPI tft;
 extern TFT_eSprite console;
 
 
-
 SemaphoreHandle_t i2cSemarphore;
 byte watchInterruptPin = 27; // maker watch interrup pin 27
 volatile byte interruptFlag=0;  // for enable interrupt
+
+
+bool loopTaskWDTEnabled;
+uint8_t i2cBridgeAddress = 0x70;
+uint8_t batteryControllerI2cAddress = 0x75;
 
 
 TaskHandle_t loopTaskHandle = NULL;
@@ -35,12 +39,6 @@ TaskHandle_t loopTaskHandle = NULL;
 	 
  }
  
-
-
-
-bool loopTaskWDTEnabled;
-uint8_t i2cBridgeAddress = 0x70;
-uint8_t batteryControllerI2cAddress = 0x75;
 
 
 void loopTask(void *pvParameters)
@@ -114,10 +112,21 @@ void loopTask(void *pvParameters)
 	
 	
     setup();
+	/*
+	// for test
 	
-	
-	i2cscanservice();
-	selectDevice(); 
+	int io16bit = 0x58;
+	  Wire.beginTransmission(io16bit); // transmit to device 
+      Wire.write(0x06);        // config register p0
+      Wire.write(255);        // data 0 out 1in
+      Wire.endTransmission();    // stop transmitting
+
+      Wire.beginTransmission(io16bit); // transmit to device 
+      Wire.write(0x07);        // config register p0
+      Wire.write(254);        // data
+      Wire.endTransmission();    // stop transmitting
+	  
+	  */
 	
     for(;;) 
 	{
@@ -169,13 +178,13 @@ void loopTask(void *pvParameters)
 
 			 
 			// while( xSemaphoreTake( i2cSemarphore, portMAX_DELAY ) != pdPASS );
-			if(interruptFlag==1)
-		{
+			//if(interruptFlag==1)
+		//{
 		
 			//xSemaphoreTake(i2cSemarphore, portMAX_DELAY);  //lock i2c 	 
 			//i2cscanservice();
 			//selectDevice(); // identify connect device  
-			Serial.println("interrupt trigger");  
+			//Serial.println("interrupt trigger");  
 			//interruptPinDrive(); // check pin interrupt occur and drive relevent callback function
 			
 			//xSemaphoreGive(i2cSemarphore); // release semaphore
@@ -189,8 +198,8 @@ void loopTask(void *pvParameters)
 			//consoleLog("Hi ishara", TFT_RED);
 			// delay(2000);
 
-			interruptFlag = 0;
-		}
+			//interruptFlag = 0;
+		//}
 
 
 		
@@ -204,24 +213,18 @@ void loopTask(void *pvParameters)
 
     for(;;) 
 	{
-		//i2cscanservice();
-		//selectDevice(); // identify connect device
-		
-		//Serial.println("runing task");
-		//delay(1000);
-			
 		
 		if(interruptFlag==1)
 		{
 		
-			//xSemaphoreTake(i2cSemarphore, portMAX_DELAY);  //lock i2c 	 
+			xSemaphoreTake(i2cSemarphore, portMAX_DELAY);  //lock i2c 	 
 			//i2cscanservice();
 			//selectDevice(); // identify connect device  
-			Serial.println("interrupt trigger");  
-			runPinInterrupt(1,1);	
-			//interruptPinDrive(); // check pin interrupt occur and drive relevent callback function
+			//Serial.println("interrupt trigger");  
+			//runPinInterrupt(1,1);	
+			interruptPinDrive(); // check pin interrupt occur and drive relevent callback function
 			
-			//xSemaphoreGive(i2cSemarphore); // release semaphore
+			xSemaphoreGive(i2cSemarphore); // release semaphore
 			 //delay(1000);
 			
 			
@@ -271,7 +274,7 @@ extern "C" void app_main()
 	//pinMode(watchInterruptPin, INPUT_PULLUP); //INPUT_PULLUP
 	//attachInterrupt(digitalPinToInterrupt(watchInterruptPin), interruptTrigger, FALLING); //aw 9523 is open drain low lavel active, with pull up resister
 
-	//i2cSemarphore = xSemaphoreCreateMutex();  //create i2c semarphore
+	i2cSemarphore = xSemaphoreCreateMutex();  //create i2c semarphore
 	//delay(1000);
     xTaskCreateUniversal(loopTask, "loopTask", 8192, NULL, 2, &loopTaskHandle, CONFIG_ARDUINO_RUNNING_CORE);
 	xTaskCreateUniversal(i2cScanService, "i2cScanService", 1024, NULL, 1, &loopTaskHandle, CONFIG_ARDUINO_RUNNING_CORE);

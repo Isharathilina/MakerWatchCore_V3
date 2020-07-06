@@ -23,6 +23,8 @@
 #define gpioLedSelectReg1 0x12 // register for select gpio/Led mode
 #define gpioLedSelectReg0 0x13
 
+#define sofwareResetReg 0x7f
+
 // pca9557 registers from data sheet 8bit
 #define inverseReg 0x02
 #define configReg 0x03
@@ -66,12 +68,23 @@ EX16::EX16(bool AD1, bool AD0)
           i2cAddress = 0x58; // 00	88         
 		}  
         
+		
+		
+		// reset device
+		Wire.beginTransmission(i2cAddress); // transmit to device 
+		Wire.write(sofwareResetReg);        // reset reg
+		Wire.write(0);        // data 0 out 1in
+		Wire.endTransmission();    // stop transmitting
+			
+		
+		
 
         // config config_port registers for all pins as input in initilize mode
         /*
         04h config p1
         05 config p2
         */
+		
         Wire.beginTransmission(i2cAddress); // transmit to device 
         Wire.write(configPort0);        // config register p0
         Wire.write(pinModeP0);        // data , all pin as input
@@ -142,24 +155,37 @@ int EX16::readBit(uint8_t data, uint8_t pin)
 
 void EX16::pinMode(uint8_t pin, uint8_t mode)
 {
-	
+	bool pinModeVal;
+	if(mode==1)
+	{
+		pinModeVal=1;
+	}else
+	{
+		pinModeVal=0;
+	}
 	
 	if(pin<9){
-      pinModeP0 = modifyBit(pinModeP0, pin, !mode); // change relavent bit in pin mode
+	
+		
+      pinModeP0 = modifyBit(pinModeP0, pin, pinModeVal); // change relavent bit in pin mode
 
       Wire.beginTransmission(i2cAddress); // transmit to device 
       Wire.write(configPort0);        // config register p0
       Wire.write(pinModeP0);        // data
       Wire.endTransmission();    // stop transmitting
+	  
+
 
     }else
     {
-      pinModeP1 = modifyBit(pinModeP1, pin-8, !mode); // change relavent bit in pin mode
+      pinModeP1 = modifyBit(pinModeP1, pin-8, pinModeVal); // change relavent bit in pin mode
 
       Wire.beginTransmission(i2cAddress); // transmit to device 
       Wire.write(configPort1);        // config register p1
       Wire.write(pinModeP1);        // data 
       Wire.endTransmission();    // stop transmitting
+	  
+	  
     }
 	
 }
@@ -167,6 +193,8 @@ void EX16::pinMode(uint8_t pin, uint8_t mode)
 
 void EX16::interruptConfig(uint8_t pin, uint8_t mode) // mode 1 for enable
 {
+		
+		
 	if(pin<8)
 	{	
       interruptPinModeP0 = modifyBit(interruptPinModeP0, pin, !mode); // change relavent bit in pin mode
@@ -448,8 +476,16 @@ int EX8::modifyBit(int currentByte, int BitPosition, int bitData) // bit field, 
 // pin , CpinMode  INPUT == 0
 void EX8::pinMode(uint8_t pin, uint8_t mode)
 {
+	bool pinModeVal;
+	if(mode==1)
+	{
+		pinModeVal=1;
+	}else
+	{
+		pinModeVal=0;
+	}
 	
-      pinModeP0 = modifyBit(pinModeP0, pin, !mode); // change relavent bit in pin mode (!mode use for match with arduino mode)
+      pinModeP0 = modifyBit(pinModeP0, pin, pinModeVal); // change relavent bit in pin mode (!mode use for match with arduino mode)
 
       Wire.beginTransmission(i2cAddress); // transmit to device 
       Wire.write(configReg);        // config register p0
