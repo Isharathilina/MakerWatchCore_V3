@@ -10,7 +10,7 @@
 //[alredy included from arduino.h]
 //#include "maker_watch/display/TFT_eSPI.h"  
 //#include "maker_watch/pinhandle.h" 
-//#include "maker_watch/ioExtender.h"
+#include "maker_watch/ioExtender.h"
 
 extern uint8_t ex16bitCount;
 extern uint8_t ex8bitCount;
@@ -134,6 +134,7 @@ void loopTask(void *pvParameters)
             esp_task_wdt_reset();
         }
 		
+		//xSemaphoreTake(i2cSemarphore, portMAX_DELAY);  //lock i2c
         loop();
 		
 			//i2cscanservice();
@@ -201,7 +202,7 @@ void loopTask(void *pvParameters)
 			//interruptFlag = 0;
 		//}
 
-
+		//xSemaphoreGive(i2cSemarphore); // release semaphore
 		
     }
 }
@@ -220,9 +221,11 @@ void loopTask(void *pvParameters)
 			xSemaphoreTake(i2cSemarphore, portMAX_DELAY);  //lock i2c 	 
 			//i2cscanservice();
 			//selectDevice(); // identify connect device  
-			//Serial.println("interrupt trigger");  
+			Serial.println("interrupt trigger");  
 			//runPinInterrupt(1,1);	
 			interruptPinDrive(); // check pin interrupt occur and drive relevent callback function
+			
+			//EX16_1.getInterruptedPin(); 
 			
 			xSemaphoreGive(i2cSemarphore); // release semaphore
 			 //delay(1000);

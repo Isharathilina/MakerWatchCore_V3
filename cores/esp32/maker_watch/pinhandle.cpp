@@ -1201,7 +1201,7 @@ void runPinInterrupt(uint8_t pin, int8_t edge)
 			{
 				runPinInterruptInC(pin);
 				
-			}else if(configerdInterrupEdgeList[pin]==2 && edge==-1) // faling edge
+			}else if( ((configerdInterrupEdgeList[pin]==2)||(configerdInterrupEdgeList[pin]==0)) && edge==-1) // faling edge
 			{
 				runPinInterruptInC(pin);
 				
@@ -1255,15 +1255,26 @@ void interruptPinDrive()
 				if(ex16bitCount==1)
 				{
 					
-					pin = EX16_1.getInterruptedPin();  // noice interrupt genarate 
+					pin = EX16_1.getInterruptedPin();  // noice interrupt genarate 	
 					//pin = 5;
 					//Serial.print("pin value");
 					//Serial.println(pin);
 					if(pin!=0) // if return 0, it havent detect interrupt
 					{
+						for(byte st=0;st<65; st++)
+						{
+							if(configerdInterruptPinList[st]==pin) // check configer interrupt for this pin
+							{						
+								runPinInterrupt((pin+pinAjustVal_Ex8bit), EX16_1.getInterruptEdge()); //EX16_1.getInterruptEdge()
+								Serial.print("edge ");
+								Serial.println(EX16_1.getInterruptEdge());
+								break;
+							}
+						}
+						
 						// if configered pin;  EX16_1.getInterruptEdge()
 						// then, run
-						runPinInterrupt((pin+pinAjustVal_Ex8bit), 1); //EX16_1.getInterruptEdge()
+						
 						//Serial.println(pin+pinAjustVal_Ex8bit);
 					}
 				}else if(ex16bitCount==2)
@@ -1273,7 +1284,15 @@ void interruptPinDrive()
 					{
 						// if configered pin;
 						// then, run
-						runPinInterrupt((pin+pinAjustVal_Ex8bit), EX16_1.getInterruptEdge());
+						for(byte st=0;st<65; st++)
+						{
+							if(configerdInterruptPinList[st]==pin) // check configer interrupt for this pin
+							{
+								runPinInterrupt((pin+pinAjustVal_Ex8bit), EX16_1.getInterruptEdge());
+								break;
+							}
+						}
+						
 					}
 					
 					pin = EX16_2.getInterruptedPin();
@@ -1281,7 +1300,15 @@ void interruptPinDrive()
 					{
 						// if configered pin;
 						// then, run
-						runPinInterrupt((pin+16+pinAjustVal_Ex8bit), EX16_2.getInterruptEdge());
+						for(byte st=0;st<65; st++)
+						{
+							if(configerdInterruptPinList[st]==pin) // check configer interrupt for this pin
+							{
+								runPinInterrupt((pin+16+pinAjustVal_Ex8bit), EX16_2.getInterruptEdge());
+								break;
+							}
+						}
+						
 					}
 					
 				}else if(ex16bitCount==3)
@@ -1291,7 +1318,15 @@ void interruptPinDrive()
 					{
 						// if configered pin;
 						// then, run
-						runPinInterrupt((pin+pinAjustVal_Ex8bit), EX16_1.getInterruptEdge());
+						for(byte st=0;st<65; st++)
+						{
+							if(configerdInterruptPinList[st]==pin) // check configer interrupt for this pin
+							{
+								runPinInterrupt((pin+pinAjustVal_Ex8bit), EX16_1.getInterruptEdge());
+								break;
+							}
+						}
+						
 					}
 					
 					pin = EX16_2.getInterruptedPin();
@@ -1299,7 +1334,15 @@ void interruptPinDrive()
 					{
 						// if configered pin;
 						// then, run
-						runPinInterrupt((pin+16+pinAjustVal_Ex8bit), EX16_2.getInterruptEdge());
+						for(byte st=0;st<65; st++)
+						{
+							if(configerdInterruptPinList[st]==pin) // check configer interrupt for this pin
+							{
+								runPinInterrupt((pin+16+pinAjustVal_Ex8bit), EX16_2.getInterruptEdge());
+								break;
+							}
+						}
+						
 					}
 					
 					pin = EX16_3.getInterruptedPin();
@@ -1307,7 +1350,15 @@ void interruptPinDrive()
 					{
 						// if configered pin;
 						// then, run
-						runPinInterrupt((pin+32+pinAjustVal_Ex8bit), EX16_3.getInterruptEdge());
+						for(byte st=0;st<65; st++)
+						{
+							if(configerdInterruptPinList[st]==pin) // check configer interrupt for this pin
+							{
+								runPinInterrupt((pin+32+pinAjustVal_Ex8bit), EX16_3.getInterruptEdge());
+								break;
+							}
+						}
+						
 					}
 					
 				}else if(ex16bitCount==4)
@@ -1317,7 +1368,15 @@ void interruptPinDrive()
 					{
 						// if configered pin;
 						// then, run
-						runPinInterrupt((pin+pinAjustVal_Ex8bit), EX16_1.getInterruptEdge());
+						for(byte st=0;st<65; st++)
+						{
+							if(configerdInterruptPinList[st]==pin) // check configer interrupt for this pin
+							{
+								runPinInterrupt((pin+pinAjustVal_Ex8bit), EX16_1.getInterruptEdge());
+								break;
+							}
+						}
+						
 					}
 					
 					pin = EX16_2.getInterruptedPin();
@@ -1325,7 +1384,15 @@ void interruptPinDrive()
 					{
 						// if configered pin;
 						// then, run
-						runPinInterrupt((pin+16+pinAjustVal_Ex8bit), EX16_2.getInterruptEdge());
+						for(byte st=0;st<65; st++)
+						{
+							if(configerdInterruptPinList[st]==pin) // check configer interrupt for this pin
+							{
+								runPinInterrupt((pin+16+pinAjustVal_Ex8bit), EX16_2.getInterruptEdge());
+								break;
+							}
+						}
+						
 					}
 					
 					pin = EX16_3.getInterruptedPin();
@@ -1333,7 +1400,15 @@ void interruptPinDrive()
 					{
 						// if configered pin;
 						// then, run
-						runPinInterrupt((pin+32+pinAjustVal_Ex8bit), EX16_3.getInterruptEdge());
+						for(byte st=0;st<65; st++)
+						{
+							if(configerdInterruptPinList[st]==pin) // check configer interrupt for this pin
+							{
+								runPinInterrupt((pin+32+pinAjustVal_Ex8bit), EX16_3.getInterruptEdge());
+								break;
+							}
+						}
+						
 					}
 					
 					pin = EX16_4.getInterruptedPin();
@@ -1341,7 +1416,14 @@ void interruptPinDrive()
 					{
 						// if configered pin;
 						// then, run
-						runPinInterrupt((pin+48+pinAjustVal_Ex8bit), EX16_4.getInterruptEdge());
+						for(byte st=0;st<65; st++)
+						{
+							if(configerdInterruptPinList[st]==pin) // check configer interrupt for this pin
+							{
+								runPinInterrupt((pin+48+pinAjustVal_Ex8bit), EX16_4.getInterruptEdge());
+								break;
+							}
+						}
 					}
 				}
 				

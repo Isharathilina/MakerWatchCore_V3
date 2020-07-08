@@ -205,9 +205,9 @@ void EX16::interruptConfig(uint8_t pin, uint8_t mode) // mode 1 for enable
       Wire.endTransmission();    // stop transmitting
 	  
 	  
-	  Serial.print("set interrupt data my :-");
-	  Serial.println(interruptPinModeP0); //testing
-	  Serial.println(pin); //testing
+	  //Serial.print("set interrupt data my :-");
+	 // Serial.println(interruptPinModeP0); //testing
+	 // Serial.println(pin); //testing
 	  //pushPullData0 = modifyBit(pushPullData0, pin, !mode);
 
     }else
@@ -220,9 +220,9 @@ void EX16::interruptConfig(uint8_t pin, uint8_t mode) // mode 1 for enable
       Wire.endTransmission();    // stop transmitting
     }
 	
-	Serial.print("set interrupt data :-");
-	Serial.println(interruptPinModeP0); //testing
-	Serial.println(pin); //testing
+	//Serial.print("set interrupt data :-");
+	//Serial.println(interruptPinModeP0); //testing
+	//Serial.println(pin); //testing
 }
 
 
@@ -387,7 +387,9 @@ uint8_t EX16::getInterruptedPin()
 		
 		if(pin!=0) // detect interrupt
 		{	
-			interruptPinDataP0=interruptPinDataP0New;  // set new value for previous status
+			interruptPinDataP0=interruptPinDataP0New;			// set new value for previous status
+			//Serial.print("interrupted pin");
+			//Serial.println(pin);
 			return pin;
 		}else // if pin ==0 then p0 havent interruppt, so check p1
 		{
@@ -405,9 +407,13 @@ uint8_t EX16::getInterruptedPin()
 			if(pin!=0)
 			{
 				interruptPinDataP1=interruptPinDataP1New;  // set new value for previous status
+				//Serial.print("interrupted pin");
+				//Serial.println(pin);
 				return pin+8;
+				
 			}else
 			{
+				//Serial.println("no interrupt");
 				return 0;
 			}
 			
